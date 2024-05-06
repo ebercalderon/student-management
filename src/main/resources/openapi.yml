@@ -10,7 +10,7 @@ tags:
   - name: Student
     description: Student Controller
 paths:
-  /students:
+  /api/students:
     post:
       summary: Crear un alumno
       requestBody:
