@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: student-management
+  cloud:
+    config:
+      name: student-management
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /openapi

@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: API Student Management
+  description: Permite gestionar alumnos
+  version: 1.0.0
+externalDocs:
+  url: 'https://github.com/ebercalderon/student-management'
+  description: Más información
+tags:
+  - name: Student
+    description: Student Controller
+paths:
+  /students:
+    post:
+      summary: Crear un alumno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      tags:
+        - Student
+      responses:
+        '200':
+          description: Alumno creado exitosamente
+        '400':
+          description: Error de validación
+        '409':
+          description: El ID del alumno ya existe
+    get:
+      summary: Obtener todos los alumnos activos
+      tags:
+        - Student
+      responses:
+        '200':
+          description: Lista de alumnos activos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del alumno
+        nombre:
+          type: string
+          description: Nombre del alumno
+        apellido:
+          type: string
+          description: Apellido del alumno
+        estado:
+          type: string
+          description: Estado del alumno (activo o inactivo)
+        edad:
+          type: integer
+          description: Edad del alumno
