@@ -2,13 +2,15 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'jacoco'
+	id 'checkstyle'
 }
 
 group = 'com.scotiabank'
 version = '1.0.0-SNAPSHOT'
 
 java {
-	sourceCompatibility = '11'
+	sourceCompatibility = JavaVersion.VERSION_11
 }
 
 configurations {
@@ -36,3 +38,35 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jacoco {
+	toolVersion = "0.8.9"
+	reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+test {
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = false
+		csv.required = false
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it,
+					exclude: ['**/model/**', '**/config/*Properties.*', '**/config/*Configuration.*'])
+		}))
+	}
+}
+
+checkstyle {
+	toolVersion = "10.3.3"
+	configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+	configProperties = [
+			'checkstyle.suppressions.file': file("${project.rootDir}/config/checkstyle/suppressions.xml")
+	]
+}
+
