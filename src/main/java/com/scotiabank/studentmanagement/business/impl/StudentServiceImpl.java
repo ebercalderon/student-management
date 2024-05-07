@@ -1,7 +1,9 @@
 package com.scotiabank.studentmanagement.business.impl;
 
 import com.scotiabank.studentmanagement.business.StudentService;
+import com.scotiabank.studentmanagement.exception.ApiException;
 import com.scotiabank.studentmanagement.model.entity.Student;
+import com.scotiabank.studentmanagement.model.enums.ErrorCatalog;
 import com.scotiabank.studentmanagement.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,11 +28,11 @@ public class StudentServiceImpl implements StudentService {
   @Override
   public Mono<Void> createStudent(Student student) {
     return this.findById(student.getId())
-        .flatMap(existingAlumno -> Mono.error(new RuntimeException("El ID del alumno ya existe")))
+        .flatMap(existingAlumno -> Mono.error(new ApiException(ErrorCatalog.E002)))
         .switchIfEmpty(
             studentRepository.createStudent(student.getId(), student.getName(),
                 student.getLastName(), student.getStatus().toUpperCase(), student.getAge())
-        ).then(Mono.empty());
+        ).then();
   }
 
   private Mono<Student> findById(String id) {
