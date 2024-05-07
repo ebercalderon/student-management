@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 public class Constants {
 
   public static final String ACTIVE_STATUS = "ACTIVO";
+  public static final String MESSAGE = "message";
+  public static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
 
 }
