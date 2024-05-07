@@ -63,9 +63,7 @@ class StudentServiceImplTest {
     Flux<Student> response = service.listStudentByStatus(status);
 
     StepVerifier.create(response)
-        .assertNext(result -> {
-          assertThat(result.getStatus()).isEqualTo(status);
-        })
+        .assertNext(result -> assertThat(result.getStatus()).isEqualTo(status))
         .verifyComplete();
   }
 

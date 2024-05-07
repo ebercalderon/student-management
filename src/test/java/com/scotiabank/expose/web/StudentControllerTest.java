@@ -1,6 +1,6 @@
 package com.scotiabank.expose.web;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
@@ -40,10 +40,6 @@ class StudentControllerTest {
 
   private Student student;
 
-  private MockMvc mockMvc;
-
-  private ObjectMapper objectMapper;
-
   @BeforeEach
   void setUp() {
     student = DummyUtil.getStudent();
@@ -80,18 +76,18 @@ class StudentControllerTest {
   @CsvSource(value = {"is empty|''", "is null|"}, delimiter = '|')
   @DisplayName("Return error when student data")
   void returnErrorWhenStudentData(String details, String param) throws Exception {
-    mockMvc = MockMvcBuilders.standaloneSetup(controller)
+    MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
         .setControllerAdvice(new ApiExceptionHandler())
         .build();
-    objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     student.setId(param);
 
     mockMvc.perform(post("/api/students")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(student)))
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException));
+        .andExpect(result -> assertInstanceOf(MethodArgumentNotValidException.class,
+            result.getResolvedException()));
   }
 
 
