@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API Student Management
+  description: "## Code Challenge – Digital Factory Perú – Scotiabank\r\n\r\n### Descripción\r\nEl proyecto consiste en el desarrollo de un microservicio que expone dos servicios reactivos REST con el fin de gestionar información de alumnos de la siguiente manera:\r\n\r\n- **Grabar un alumno:**\r\n    - Se espera recibir una solicitud para grabar un alumno con atributos como id, nombre, apellido, estado (activo o inactivo) y edad. El sistema realiza una validación exhaustiva de cada campo para garantizar la consistencia de los datos antes de proceder con la grabación del alumno.\r\n    - En caso de que el Id sea repetido, se emite un mensaje de error indicando que la grabación no puede ser realizada.\r\n    - Si la grabación se ejecuta correctamente, el servicio responde con un mensaje vacío confirmando la operación.\r\n- **Obtener alumnos activos:**\r\n    - Este servicio devuelve una lista de todos los alumnos que tienen el estado activo.\r\n    - El proyecto se desarrolla siguiendo una Arquitectura por Capas.\r\n\r\nPara garantizar la persistencia de los datos, se emplea R2DBC junto con H2 Database, que funciona como una base de datos en memoria. R2DBC permite el acceso a la base de datos de forma reactiva, lo que mejora la escalabilidad y el rendimiento de la aplicación.\r\n\r\nSe incluyeron pruebas unitarias para garantizar la fiabilidad del código desarrollado. La cobertura de pruebas se evaluó exhaustivamente para asegurar la calidad del software.\r\n\r\n### Especificaciones\r\n- [Spring Boot 2.7.7](https://start.spring.io/)\r\n- JDK 11\r\n- Gradle - Groovy\r\n- Spring WebFlux\r\n- R2DBC + H2\r\n\r\n> [GitHub](https://github.com/ebercalderon/student-management/)"
+servers:
+  - url: 'https://eber-code-challenge.azurewebsites.net'
+    description: 'Producción'
+externalDocs:
+  url: 'https://github.com/ebercalderon/student-management'
+  description: Más información
+tags:
+  - name: Student
+    description: Student Controller
+paths:
+  /api/students:
+    post:
+      tags:
+        - Student
+      summary: Crear un alumno
+      operationId: crearAlumno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Alumno creado exitosamente
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  details:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      id:
+                        type: string
+                  time:
+                    type: string
+                x-examples:
+                  Example 1:
+                    status: 400
+                    message: Error de validación
+                    details:
+                      name: El nombre del estudiante no puede ser vació
+                      id: El ID del estudiante no puede ser vació
+                    time: '06-05-2024 11:29:49'
+        '409':
+          description: El ID del alumno ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  details:
+                    type: object
+                  time:
+                    type: string
+                x-examples:
+                  Example 1:
+                    status: 409
+                    message: El ID del alumno ya existe
+                    details: {}
+                    time: '06-05-2024 11:29:49'
+      servers:
+        - url: 'https://eber-code-challenge.azurewebsites.net'
+          description: ''
+    get:
+      tags:
+        - Student
+      summary: Obtener todos los alumnos activos
+      operationId: listarAlumnos
+      responses:
+        '200':
+          description: Lista de alumnos activos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+      servers:
+        - url: 'https://eber-code-challenge.azurewebsites.net'
+          description: ''
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del alumno
+        nombre:
+          type: string
+          description: Nombre del alumno
+        apellido:
+          type: string
+          description: Apellido del alumno
+        estado:
+          type: string
+          description: Estado del alumno (activo o inactivo)
+        edad:
+          type: integer
+          description: Edad del alumno
