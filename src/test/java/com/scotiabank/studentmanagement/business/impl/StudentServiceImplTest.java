@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
+import com.scotiabank.studentmanagement.exception.ApiException;
 import com.scotiabank.studentmanagement.model.entity.Student;
 import com.scotiabank.studentmanagement.repository.StudentRepository;
 import com.scotiabank.util.DummyUtil;
@@ -36,9 +37,9 @@ class StudentServiceImplTest {
     student = DummyUtil.getStudent();
   }
 
-  @DisplayName("Create student when data is complete")
+  @DisplayName("Create student when data is valid")
   @Test
-  void createStudentWhenDataIsComplete() {
+  void createStudentWhenDataIsValid() {
 
     given(repository.findById(anyString()))
         .willReturn(Mono.empty());
@@ -66,6 +67,22 @@ class StudentServiceImplTest {
           assertThat(result.getStatus()).isEqualTo(status);
         })
         .verifyComplete();
+  }
+
+  @DisplayName("Return error when id is duplicated")
+  @Test
+  void returnErrorWhenIdIsDuplicated() {
+
+    given(repository.findById(anyString()))
+        .willReturn(Mono.just(student));
+    given(repository.createStudent(anyString(), anyString(), anyString(), anyString(), anyInt()))
+        .willReturn(Mono.empty());
+
+    Mono<Void> response = service.createStudent(student);
+
+    StepVerifier.create(response)
+        .expectError(ApiException.class)
+        .verify();
   }
 
 }
