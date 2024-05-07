@@ -2,9 +2,7 @@ package com.scotiabank.studentmanagement.exception;
 
 import com.scotiabank.studentmanagement.model.dto.ErrorDto;
 import com.scotiabank.studentmanagement.model.enums.ErrorCatalog;
-import com.scotiabank.studentmanagement.util.constants.Constants;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.scotiabank.studentmanagement.util.Utils;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -41,7 +39,7 @@ public class ApiExceptionHandler {
 
   private ResponseEntity<ErrorDto> buildResponse(int status, String message,
       Map<String, String> details) {
-    String time = new SimpleDateFormat(Constants.DATE_FORMAT).format(new Date());
+    String time = Utils.getDateFormatted();
     ErrorDto errorDto = new ErrorDto(status, message, details, time);
     return new ResponseEntity<>(errorDto, HttpStatus.valueOf(status));
   }
